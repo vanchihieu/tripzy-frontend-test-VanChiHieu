@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-// @ts-expect-error: Cannot find module or type declarations for side-effect import of './globals.css'.
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
