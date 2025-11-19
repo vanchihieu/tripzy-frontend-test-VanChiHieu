@@ -41,16 +41,19 @@ var react_1 = require("react");
 var react_hook_form_1 = require("react-hook-form");
 var navigation_1 = require("next/navigation");
 var lucide_react_1 = require("lucide-react");
+var helpers_1 = require("@/utils/helpers");
+var Button_1 = require("@/components/ui/Button");
 var Autocomplete_1 = require("./Autocomplete");
 var DatePicker_1 = require("./DatePicker");
+var PassengerCounter_1 = require("./PassengerCounter");
 function BusSearchForm(_a) {
     var _this = this;
-    var _b, _c, _d, _e;
+    var _b, _c, _d, _e, _f;
     var locations = _a.locations;
     var router = navigation_1.useRouter();
-    var _f = react_1.useState(false), isRoundTrip = _f[0], setIsRoundTrip = _f[1];
-    var _g = react_1.useState(false), isLoading = _g[0], setIsLoading = _g[1];
-    var _h = react_hook_form_1.useForm({
+    var _g = react_1.useState(false), isRoundTrip = _g[0], setIsRoundTrip = _g[1];
+    var _h = react_1.useState(false), isLoading = _h[0], setIsLoading = _h[1];
+    var _j = react_hook_form_1.useForm({
         defaultValues: {
             mode: "bus",
             from: "",
@@ -60,7 +63,7 @@ function BusSearchForm(_a) {
             passengers: 1,
             isRoundTrip: false
         }
-    }), watch = _h.watch, setValue = _h.setValue, handleSubmit = _h.handleSubmit, errors = _h.formState.errors, setError = _h.setError, clearErrors = _h.clearErrors;
+    }), watch = _j.watch, setValue = _j.setValue, handleSubmit = _j.handleSubmit, errors = _j.formState.errors, setError = _j.setError, clearErrors = _j.clearErrors;
     var watchedValues = watch();
     // Get today's date in YYYY-MM-DD format
     var today = new Date().toISOString().split("T")[0];
@@ -73,81 +76,72 @@ function BusSearchForm(_a) {
     };
     var validateForm = function (data) {
         var isValid = true;
-        // Clear previous errors
         clearErrors();
         // Validate from location
-        if (!data.from.trim()) {
-            setError("from", { message: "Please select departure location" });
+        var fromError = helpers_1.validationRules.required(data.from, "Departure");
+        if (fromError) {
+            setError("from", { message: "Select departure" });
             isValid = false;
         }
         // Validate to location
-        if (!data.to.trim()) {
-            setError("to", { message: "Please select destination" });
+        var toError = helpers_1.validationRules.required(data.to, "Destination");
+        if (toError) {
+            setError("to", { message: "Select destination" });
             isValid = false;
         }
-        // Check if from and to are the same
-        if (data.from && data.to && data.from === data.to) {
-            setError("to", {
-                message: "Destination must be different from departure"
-            });
+        // Check if from and to are different
+        var sameLocationError = helpers_1.validationRules.notEqual(data.from, data.to, "Destination");
+        if (sameLocationError) {
+            setError("to", { message: "Must be different" });
             isValid = false;
         }
         // Validate departure date
-        if (!data.departureDate) {
-            setError("departureDate", { message: "Please select departure date" });
+        var dateError = helpers_1.validationRules.required(data.departureDate, "Date");
+        if (dateError) {
+            setError("departureDate", { message: "Select date" });
             isValid = false;
         }
         else {
-            var depDate = new Date(data.departureDate);
-            var today_1 = new Date();
-            today_1.setHours(0, 0, 0, 0);
-            if (depDate < today_1) {
-                setError("departureDate", {
-                    message: "Departure date cannot be in the past"
-                });
+            var futureDateError = helpers_1.validationRules.futureDate(data.departureDate, "Departure date");
+            if (futureDateError) {
+                setError("departureDate", { message: "Cannot be in past" });
                 isValid = false;
             }
         }
         // Validate return date if round trip
         if (isRoundTrip && data.returnDate) {
-            var depDate = new Date(data.departureDate);
-            var retDate = new Date(data.returnDate);
-            if (retDate < depDate) {
-                setError("returnDate", {
-                    message: "Return date must be after departure date"
-                });
+            var dateRangeError = helpers_1.validationRules.dateRange(data.departureDate, data.returnDate);
+            if (dateRangeError) {
+                setError("returnDate", { message: "Must be after departure" });
                 isValid = false;
             }
         }
         // Validate passengers
-        if (data.passengers < 1) {
-            setError("passengers", {
-                message: "Number of passengers must be at least 1"
-            });
+        var passengersError = helpers_1.validationRules.numberRange(data.passengers, 1, 9, "Passengers");
+        if (passengersError) {
+            setError("passengers", { message: "Between 1-9" });
             isValid = false;
         }
         return isValid;
     };
     var onSubmit = function (data) { return __awaiter(_this, void 0, void 0, function () {
-        var params;
+        var searchParams;
         return __generator(this, function (_a) {
             if (!validateForm(data)) {
                 return [2 /*return*/];
             }
             setIsLoading(true);
             try {
-                params = new URLSearchParams({
+                searchParams = helpers_1.urlUtils.buildSearchParams({
                     mode: data.mode,
-                    from: encodeURIComponent(data.from),
-                    to: encodeURIComponent(data.to),
+                    from: data.from,
+                    to: data.to,
                     dep: data.departureDate,
-                    pax: data.passengers.toString()
+                    ret: isRoundTrip ? data.returnDate : undefined,
+                    pax: data.passengers
                 });
-                if (isRoundTrip && data.returnDate) {
-                    params.append("ret", data.returnDate);
-                }
                 // Navigate to search page
-                router.push("/search?" + params.toString());
+                router.push("/search?" + searchParams);
             }
             catch (error) {
                 console.error("Search error:", error);
@@ -159,28 +153,31 @@ function BusSearchForm(_a) {
         });
     }); };
     return (React.createElement("form", { onSubmit: handleSubmit(onSubmit), className: "space-y-6" },
-        React.createElement("div", { className: "grid grid-cols-5 gap-4" },
-            React.createElement("div", null,
+        React.createElement("div", { className: "flex items-end gap-3" },
+            React.createElement("div", { className: "flex-1 min-w-[220px]" },
                 React.createElement("label", { className: "block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide" }, "FROM"),
                 React.createElement(Autocomplete_1["default"], { value: watchedValues.from, onChange: function (value) {
                         setValue("from", value);
                         clearErrors("from");
-                    }, placeholder: "Enter location", locations: locations, error: (_b = errors.from) === null || _b === void 0 ? void 0 : _b.message })),
-            React.createElement("div", null,
+                    }, placeholder: "Enter city, terminal...", locations: locations, error: (_b = errors.from) === null || _b === void 0 ? void 0 : _b.message })),
+            React.createElement("div", { className: "pb-3" },
+                React.createElement("button", { type: "button", onClick: swapLocations, className: "bg-cyan-400 hover:bg-cyan-500 text-white rounded-full p-2 transition-colors shadow-md" },
+                    React.createElement(lucide_react_1.ArrowLeftRight, { className: "w-5 h-5" }))),
+            React.createElement("div", { className: "flex-1 min-w-[220px]" },
                 React.createElement("label", { className: "block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide" }, "TO"),
                 React.createElement(Autocomplete_1["default"], { value: watchedValues.to, onChange: function (value) {
                         setValue("to", value);
                         clearErrors("to");
-                    }, placeholder: "Enter destination", locations: locations, error: (_c = errors.to) === null || _c === void 0 ? void 0 : _c.message })),
-            React.createElement("div", null,
+                    }, placeholder: "Enter city, terminal...", locations: locations, error: (_c = errors.to) === null || _c === void 0 ? void 0 : _c.message })),
+            React.createElement("div", { className: "w-40" },
                 React.createElement("label", { className: "block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide" }, "DEPARTURE DATE"),
                 React.createElement(DatePicker_1["default"], { value: watchedValues.departureDate, onChange: function (date) {
                         setValue("departureDate", date);
                         clearErrors("departureDate");
                     }, placeholder: "mm/dd/yyyy", min: today, error: (_d = errors.departureDate) === null || _d === void 0 ? void 0 : _d.message })),
-            React.createElement("div", null,
+            React.createElement("div", { className: "w-40" },
                 React.createElement("label", { className: "block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide" }, "ROUND TRIP"),
-                React.createElement("div", { className: "flex items-center space-x-4 h-12" },
+                React.createElement("div", { className: "h-12 flex items-center space-x-4" },
                     React.createElement("label", { className: "flex items-center cursor-pointer" },
                         React.createElement("input", { type: "radio", name: "tripType", checked: !isRoundTrip, onChange: function () {
                                 setIsRoundTrip(false);
@@ -191,27 +188,20 @@ function BusSearchForm(_a) {
                     React.createElement("label", { className: "flex items-center cursor-pointer" },
                         React.createElement("input", { type: "radio", name: "tripType", checked: isRoundTrip, onChange: function () { return setIsRoundTrip(true); }, className: "w-4 h-4 text-cyan-500 border-gray-300 focus:ring-cyan-500" }),
                         React.createElement("span", { className: "ml-2 text-sm font-medium text-gray-700" }, "Return")))),
-            React.createElement("div", null,
+            React.createElement("div", { className: "w-46" },
                 React.createElement("label", { className: "block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide" }, "NO. OF PASSENGERS"),
-                React.createElement("div", { className: "relative" },
-                    React.createElement("select", { value: watchedValues.passengers, onChange: function (e) {
-                            setValue("passengers", parseInt(e.target.value));
-                            clearErrors("passengers");
-                        }, className: "w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-white appearance-none cursor-pointer h-12 text-gray-700" }, Array.from({ length: 9 }, function (_, i) { return i + 1; }).map(function (num) { return (React.createElement("option", { key: num, value: num }, num)); })),
-                    React.createElement("div", { className: "absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none" },
-                        React.createElement("svg", { className: "w-4 h-4 text-gray-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
-                            React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 9l-7 7-7-7" })))),
-                errors.passengers && (React.createElement("p", { className: "mt-1 text-sm text-red-600" }, errors.passengers.message)))),
+                React.createElement(PassengerCounter_1["default"], { value: watchedValues.passengers, onChange: function (count) {
+                        setValue("passengers", count);
+                        clearErrors("passengers");
+                    }, min: 1, max: 9, error: (_e = errors.passengers) === null || _e === void 0 ? void 0 : _e.message }))),
         isRoundTrip && (React.createElement("div", { className: "mt-4" },
             React.createElement("label", { className: "block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide" }, "RETURN DATE"),
             React.createElement("div", { className: "w-1/5" },
                 React.createElement(DatePicker_1["default"], { value: watchedValues.returnDate || "", onChange: function (date) {
                         setValue("returnDate", date);
                         clearErrors("returnDate");
-                    }, placeholder: "mm/dd/yyyy", min: watchedValues.departureDate || today, error: (_e = errors.returnDate) === null || _e === void 0 ? void 0 : _e.message })))),
+                    }, placeholder: "mm/dd/yyyy", min: watchedValues.departureDate || today, error: (_f = errors.returnDate) === null || _f === void 0 ? void 0 : _f.message })))),
         React.createElement("div", { className: "flex justify-center pt-6" },
-            React.createElement("button", { type: "submit", disabled: isLoading, className: "bg-cyan-400 hover:bg-cyan-500 disabled:bg-cyan-300 text-white font-bold py-3 px-12 rounded-lg transition-colors flex items-center justify-center space-x-2 uppercase tracking-wide text-sm shadow-lg" },
-                React.createElement(lucide_react_1.Search, { className: "w-5 h-5" }),
-                React.createElement("span", null, isLoading ? "SEARCHING..." : "SEARCH")))));
+            React.createElement(Button_1.Button, { type: "submit", loading: isLoading, size: "xl", className: "px-12 uppercase tracking-wide shadow-lg", leftIcon: React.createElement(lucide_react_1.Search, { className: "w-5 h-5" }) }, isLoading ? "SEARCHING..." : "SEARCH"))));
 }
 exports["default"] = BusSearchForm;

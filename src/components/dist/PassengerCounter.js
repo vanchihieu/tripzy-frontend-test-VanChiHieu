@@ -15,16 +15,30 @@ function PassengerCounter(_a) {
         }
     };
     var handleInputChange = function (e) {
-        var newValue = parseInt(e.target.value);
-        if (!isNaN(newValue) && newValue >= min && newValue <= max) {
-            onChange(newValue);
+        var inputValue = e.target.value;
+        var newValue = parseInt(inputValue);
+        // Early return if invalid number
+        if (isNaN(newValue)) {
+            console.error("Invalid number input: " + inputValue);
+            return;
         }
+        // Early return if below minimum
+        if (newValue < min) {
+            console.error("Value " + newValue + " is below minimum " + min);
+            return;
+        }
+        // Early return if above maximum
+        if (newValue > max) {
+            console.error("Value " + newValue + " is above maximum " + max);
+            return;
+        }
+        // All validations passed, update value
+        onChange(newValue);
     };
     return (React.createElement("div", null,
         React.createElement("div", { className: "relative flex items-center justify-between border rounded-lg px-4 py-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-cyan-400 focus-within:border-cyan-400 transition-all " + (error ? "border-red-500" : "border-gray-300") + " " + (disabled ? "bg-gray-100" : "bg-white") },
             React.createElement("div", { className: "flex items-center" },
-                React.createElement(lucide_react_1.Users, { className: "w-5 h-5 text-gray-400 mr-2" }),
-                React.createElement("span", { className: "text-gray-600 text-sm" }, "Passengers")),
+                React.createElement(lucide_react_1.Users, { className: "w-5 h-5 text-gray-400 mr-2" })),
             React.createElement("div", { className: "flex items-center space-x-3" },
                 React.createElement("button", { type: "button", onClick: decrement, disabled: disabled || value <= min, className: "w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors " + (disabled || value <= min
                         ? "text-gray-300 cursor-not-allowed border-gray-200"

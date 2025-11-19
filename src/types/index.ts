@@ -1,7 +1,7 @@
 export interface Location {
-  short_code: string;
-  english_name: string;
-  code_state: string;
+  shortCode: string;
+  englishName: string;
+  codeState: string;
 }
 
 export interface SearchFormData {

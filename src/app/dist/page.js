@@ -41,18 +41,18 @@ function HomePage() {
         }
     };
     return (React.createElement("div", { className: "min-h-screen", style: {
-            background: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%)"
+            background: "linear-gradient(180deg, #e0f2fe 0%, #e0f2fe 50%, #ffffff 50%, #ffffff 100%)"
         } },
         React.createElement("header", { className: "bg-transparent" },
             React.createElement("div", { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" },
                 React.createElement("div", { className: "flex items-center" },
                     React.createElement(lucide_react_1.Snowflake, { className: "w-8 h-8 text-cyan-400 mr-3" }),
                     React.createElement("h1", { className: "text-2xl font-bold text-cyan-600" }, "Tripzy")))),
-        React.createElement("main", { className: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" },
+        React.createElement("main", { className: "max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12" },
             React.createElement("div", { className: "text-center mb-16" },
                 React.createElement("h2", { className: "text-5xl font-bold text-gray-800 mb-6" }, "Travel Smarter, Not Harder"),
                 React.createElement("p", { className: "text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed" }, "Make every trip effortless. Tripzy lets you book rides and plan journeys with ease")),
-            React.createElement("div", { className: "bg-white rounded-3xl shadow-2xl p-10 max-w-5xl mx-auto" },
+            React.createElement("div", { className: "bg-white rounded-3xl shadow-2xl p-10 max-w-6xl mx-auto" },
                 React.createElement(Tabs_1["default"], { tabs: tabs, activeTab: activeTab, onTabChange: setActiveTab, className: "mb-10" }),
                 React.createElement("div", { className: "mt-8" }, renderTabContent()))),
         React.createElement("footer", { className: "bg-white mt-20 border-t" },

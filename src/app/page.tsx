@@ -59,7 +59,7 @@ export default function HomePage() {
       className="min-h-screen"
       style={{
         background:
-          "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%)",
+          "linear-gradient(180deg, #e0f2fe 0%, #e0f2fe 50%, #ffffff 50%, #ffffff 100%)",
       }}
     >
       {/* Header */}
@@ -73,7 +73,7 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-gray-800 mb-6">
@@ -86,7 +86,7 @@ export default function HomePage() {
         </div>
 
         {/* Search Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-5xl mx-auto">
+        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-6xl mx-auto">
           {/* Tabs */}
           <Tabs
             tabs={tabs}

@@ -5,6 +5,9 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { ArrowLeftRight, Search } from "lucide-react";
 import { SearchFormData, Location } from "@/types";
+import { validationRules, urlUtils } from "@/utils/helpers";
+import { Button } from "@/components/ui/Button";
+import { Label } from "@/components/ui/Label";
 import Autocomplete from "./Autocomplete";
 import DatePicker from "./DatePicker";
 import PassengerCounter from "./PassengerCounter";
@@ -52,65 +55,70 @@ export default function BusSearchForm({ locations }: BusSearchFormProps) {
 
   const validateForm = (data: SearchFormData) => {
     let isValid = true;
-
-    // Clear previous errors
     clearErrors();
 
     // Validate from location
-    if (!data.from.trim()) {
-      setError("from", { message: "Please select departure location" });
+    const fromError = validationRules.required(data.from, "Departure");
+    if (fromError) {
+      setError("from", { message: "Select departure" });
       isValid = false;
     }
 
     // Validate to location
-    if (!data.to.trim()) {
-      setError("to", { message: "Please select destination" });
+    const toError = validationRules.required(data.to, "Destination");
+    if (toError) {
+      setError("to", { message: "Select destination" });
       isValid = false;
     }
 
-    // Check if from and to are the same
-    if (data.from && data.to && data.from === data.to) {
-      setError("to", {
-        message: "Destination must be different from departure",
-      });
+    // Check if from and to are different
+    const sameLocationError = validationRules.notEqual(
+      data.from,
+      data.to,
+      "Destination"
+    );
+    if (sameLocationError) {
+      setError("to", { message: "Must be different" });
       isValid = false;
     }
 
     // Validate departure date
-    if (!data.departureDate) {
-      setError("departureDate", { message: "Please select departure date" });
+    const dateError = validationRules.required(data.departureDate, "Date");
+    if (dateError) {
+      setError("departureDate", { message: "Select date" });
       isValid = false;
     } else {
-      const depDate = new Date(data.departureDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (depDate < today) {
-        setError("departureDate", {
-          message: "Departure date cannot be in the past",
-        });
+      const futureDateError = validationRules.futureDate(
+        data.departureDate,
+        "Departure date"
+      );
+      if (futureDateError) {
+        setError("departureDate", { message: "Cannot be in past" });
         isValid = false;
       }
     }
 
     // Validate return date if round trip
     if (isRoundTrip && data.returnDate) {
-      const depDate = new Date(data.departureDate);
-      const retDate = new Date(data.returnDate);
-
-      if (retDate < depDate) {
-        setError("returnDate", {
-          message: "Return date must be after departure date",
-        });
+      const dateRangeError = validationRules.dateRange(
+        data.departureDate,
+        data.returnDate
+      );
+      if (dateRangeError) {
+        setError("returnDate", { message: "Must be after departure" });
         isValid = false;
       }
     }
 
     // Validate passengers
-    if (data.passengers < 1) {
-      setError("passengers", {
-        message: "Number of passengers must be at least 1",
-      });
+    const passengersError = validationRules.numberRange(
+      data.passengers,
+      1,
+      9,
+      "Passengers"
+    );
+    if (passengersError) {
+      setError("passengers", { message: "Between 1-9" });
       isValid = false;
     }
 
@@ -125,21 +133,18 @@ export default function BusSearchForm({ locations }: BusSearchFormProps) {
     setIsLoading(true);
 
     try {
-      // Build query parameters
-      const params = new URLSearchParams({
+      // Build query parameters using utility
+      const searchParams = urlUtils.buildSearchParams({
         mode: data.mode,
-        from: encodeURIComponent(data.from),
-        to: encodeURIComponent(data.to),
+        from: data.from,
+        to: data.to,
         dep: data.departureDate,
-        pax: data.passengers.toString(),
+        ret: isRoundTrip ? data.returnDate : undefined,
+        pax: data.passengers,
       });
 
-      if (isRoundTrip && data.returnDate) {
-        params.append("ret", data.returnDate);
-      }
-
       // Navigate to search page
-      router.push(`/search?${params.toString()}`);
+      router.push(`/search?${searchParams}`);
     } catch (error) {
       console.error("Search error:", error);
     } finally {
@@ -149,10 +154,10 @@ export default function BusSearchForm({ locations }: BusSearchFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Main Grid Layout - Exactly matches Figma */}
-      <div className="grid grid-cols-5 gap-4">
+      {/* Single Row Layout */}
+      <div className="flex items-end gap-3">
         {/* FROM */}
-        <div>
+        <div className="flex-1 min-w-[220px]">
           <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
             FROM
           </label>
@@ -162,14 +167,25 @@ export default function BusSearchForm({ locations }: BusSearchFormProps) {
               setValue("from", value);
               clearErrors("from");
             }}
-            placeholder="Enter location"
+            placeholder="Enter city, terminal..."
             locations={locations}
             error={errors.from?.message}
           />
         </div>
 
+        {/* SWAP BUTTON */}
+        <div className="pb-3">
+          <button
+            type="button"
+            onClick={swapLocations}
+            className="bg-cyan-400 hover:bg-cyan-500 text-white rounded-full p-2 transition-colors shadow-md"
+          >
+            <ArrowLeftRight className="w-5 h-5" />
+          </button>
+        </div>
+
         {/* TO */}
-        <div>
+        <div className="flex-1 min-w-[220px]">
           <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
             TO
           </label>
@@ -179,14 +195,14 @@ export default function BusSearchForm({ locations }: BusSearchFormProps) {
               setValue("to", value);
               clearErrors("to");
             }}
-            placeholder="Enter destination"
+            placeholder="Enter city, terminal..."
             locations={locations}
             error={errors.to?.message}
           />
         </div>
 
         {/* DEPARTURE DATE */}
-        <div>
+        <div className="w-40">
           <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
             DEPARTURE DATE
           </label>
@@ -203,11 +219,11 @@ export default function BusSearchForm({ locations }: BusSearchFormProps) {
         </div>
 
         {/* ROUND TRIP */}
-        <div>
+        <div className="w-40">
           <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
             ROUND TRIP
           </label>
-          <div className="flex items-center space-x-4 h-12">
+          <div className="h-12 flex items-center space-x-4">
             <label className="flex items-center cursor-pointer">
               <input
                 type="radio"
@@ -240,46 +256,20 @@ export default function BusSearchForm({ locations }: BusSearchFormProps) {
         </div>
 
         {/* NO. OF PASSENGERS */}
-        <div>
+        <div className="w-46">
           <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
             NO. OF PASSENGERS
           </label>
-          <div className="relative">
-            <select
-              value={watchedValues.passengers}
-              onChange={(e) => {
-                setValue("passengers", parseInt(e.target.value));
-                clearErrors("passengers");
-              }}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-white appearance-none cursor-pointer h-12 text-gray-700"
-            >
-              {Array.from({ length: 9 }, (_, i) => i + 1).map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-          </div>
-          {errors.passengers && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.passengers.message}
-            </p>
-          )}
+          <PassengerCounter
+            value={watchedValues.passengers}
+            onChange={(count) => {
+              setValue("passengers", count);
+              clearErrors("passengers");
+            }}
+            min={1}
+            max={9}
+            error={errors.passengers?.message}
+          />
         </div>
       </div>
 
@@ -306,14 +296,15 @@ export default function BusSearchForm({ locations }: BusSearchFormProps) {
 
       {/* Submit Button */}
       <div className="flex justify-center pt-6">
-        <button
+        <Button
           type="submit"
-          disabled={isLoading}
-          className="bg-cyan-400 hover:bg-cyan-500 disabled:bg-cyan-300 text-white font-bold py-3 px-12 rounded-lg transition-colors flex items-center justify-center space-x-2 uppercase tracking-wide text-sm shadow-lg"
+          loading={isLoading}
+          size="xl"
+          className="px-12 uppercase tracking-wide shadow-lg"
+          leftIcon={<Search className="w-5 h-5" />}
         >
-          <Search className="w-5 h-5" />
-          <span>{isLoading ? "SEARCHING..." : "SEARCH"}</span>
-        </button>
+          {isLoading ? "SEARCHING..." : "SEARCH"}
+        </Button>
       </div>
     </form>
   );

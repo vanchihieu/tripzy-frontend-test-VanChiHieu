@@ -30,9 +30,9 @@ export default function Autocomplete({
     if (value) {
       const filtered = locations.filter(
         (location) =>
-          location.english_name.toLowerCase().includes(value.toLowerCase()) ||
-          location.short_code.toLowerCase().includes(value.toLowerCase()) ||
-          location.code_state.toLowerCase().includes(value.toLowerCase())
+          location.englishName.toLowerCase().includes(value.toLowerCase()) ||
+          location.shortCode.toLowerCase().includes(value.toLowerCase()) ||
+          location.codeState.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredLocations(filtered);
     } else {
@@ -55,7 +55,7 @@ export default function Autocomplete({
   }, []);
 
   const handleSelect = (location: Location) => {
-    onChange(location.english_name);
+    onChange(location.englishName);
     setIsOpen(false);
   };
 
@@ -98,22 +98,22 @@ export default function Autocomplete({
           ) : (
             filteredLocations.map((location) => (
               <div
-                key={location.short_code}
+                key={location.shortCode}
                 onClick={() => handleSelect(location)}
                 className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
                     <span className="text-xs font-bold text-gray-600">
-                      {location.short_code}
+                      {location.shortCode}
                     </span>
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-gray-900">
-                      {location.english_name}
+                      {location.englishName}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {location.code_state}
+                      {location.codeState}
                     </div>
                   </div>
                 </div>

@@ -32,10 +32,29 @@ export default function PassengerCounter({
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value);
-    if (!isNaN(newValue) && newValue >= min && newValue <= max) {
-      onChange(newValue);
+    const inputValue = e.target.value;
+    const newValue = parseInt(inputValue);
+
+    // Early return if invalid number
+    if (isNaN(newValue)) {
+      console.error(`Invalid number input: ${inputValue}`);
+      return;
     }
+
+    // Early return if below minimum
+    if (newValue < min) {
+      console.error(`Value ${newValue} is below minimum ${min}`);
+      return;
+    }
+
+    // Early return if above maximum
+    if (newValue > max) {
+      console.error(`Value ${newValue} is above maximum ${max}`);
+      return;
+    }
+
+    // All validations passed, update value
+    onChange(newValue);
   };
 
   return (
@@ -47,7 +66,6 @@ export default function PassengerCounter({
       >
         <div className="flex items-center">
           <Users className="w-5 h-5 text-gray-400 mr-2" />
-          <span className="text-gray-600 text-sm">Passengers</span>
         </div>
 
         <div className="flex items-center space-x-3">
