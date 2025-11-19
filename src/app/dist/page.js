@@ -54,10 +54,6 @@ function HomePage() {
                 React.createElement("p", { className: "text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed" }, "Make every trip effortless. Tripzy lets you book rides and plan journeys with ease")),
             React.createElement("div", { className: "bg-white rounded-3xl shadow-2xl p-10 max-w-6xl mx-auto" },
                 React.createElement(Tabs_1["default"], { tabs: tabs, activeTab: activeTab, onTabChange: setActiveTab, className: "mb-10" }),
-                React.createElement("div", { className: "mt-8" }, renderTabContent()))),
-        React.createElement("footer", { className: "bg-white mt-20 border-t" },
-            React.createElement("div", { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" },
-                React.createElement("div", { className: "text-center text-gray-600" },
-                    React.createElement("p", null, "\u00A9 2025 Tripzy. All rights reserved."))))));
+                React.createElement("div", { className: "mt-8" }, renderTabContent())))));
 }
 exports["default"] = HomePage;
