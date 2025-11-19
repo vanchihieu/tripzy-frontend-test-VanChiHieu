@@ -4,7 +4,7 @@ A modern, responsive travel booking search application built with Next.js 14, Ty
 
 ## 🚀 Demo
 
-**Live Demo**: [Deploy to Vercel - Coming Soon]  
+**Live Demo**: [Watch on YouTube](https://www.youtube.com/watch?v=daCLtJe2VdY) 🎥  
 **Design Reference**: [Figma Design](https://www.figma.com/design/Hop8fpSdUBnIVgWaRd2v0q/UI-Test-Nov-2025)
 
 ## ✨ Features
