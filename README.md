@@ -1,21 +1,22 @@
-# Bus Booking Search Application
+# Tripzy - Travel Booking Application
 
-A modern, responsive bus booking search application built with Next.js 14, TypeScript, and Tailwind CSS. This application allows users to search for bus tickets across Vietnam with an intuitive interface and comprehensive form validation.
+A modern, responsive travel booking search application built with Next.js 14, TypeScript, and Tailwind CSS. This application allows users to search for bus tickets, hotels, and flights with an intuitive interface matching the Figma design specifications.
 
 ## 🚀 Demo
 
-**Live Demo**: [Coming Soon - Deploy to Vercel]
+**Live Demo**: [Deploy to Vercel - Coming Soon]  
+**Design Reference**: [Figma Design](https://www.figma.com/design/Hop8fpSdUBnIVgWaRd2v0q/UI-Test-Nov-2025)
 
 ## ✨ Features
 
-- **🚌 Bus Search**: Comprehensive search form with autocomplete location selection
-- **📍 Location Autocomplete**: Smart location search with Vietnamese cities and landmarks
+- **🚌 Multi-Modal Search**: Bus & Shuttle, Hotel & Accommodation, Flight booking
+- **📍 Smart Autocomplete**: Location search with dropdown suggestions
 - **📅 Date Selection**: User-friendly date pickers with validation
-- **👥 Passenger Counter**: Intuitive passenger selection with increment/decrement controls
+- **👥 Passenger Counter**: Intuitive passenger selection interface
 - **🔄 Trip Types**: Support for one-way and round-trip bookings
 - **✅ Form Validation**: Comprehensive client-side validation with clear error messages
 - **📱 Responsive Design**: Fully responsive layout for desktop, tablet, and mobile
-- **🎨 Modern UI**: Clean, professional design with hover/focus states
+- **🎨 Figma-Accurate**: Pixel-perfect implementation of provided design
 - **⚡ Fast Navigation**: Client-side routing with URL-based state management
 
 ## 🛠️ Tech Stack
@@ -48,7 +49,7 @@ src/
 │   ├── PassengerCounter.tsx # Passenger count selector
 │   └── Tabs.tsx          # Tab navigation component
 ├── data/                  # Static data files
-│   └── locations.json     # Vietnamese locations for autocomplete
+│   └── locations.json     # Location data for autocomplete
 └── types/                 # TypeScript type definitions
     └── index.ts          # Shared type definitions
 ```
@@ -58,55 +59,83 @@ src/
 ### Prerequisites
 
 - **Node.js** 18+ (recommended: use [nvm](https://github.com/nvm-sh/nvm))
-- **npm**, **yarn**, or **pnpm** package manager
+- **Package Manager**: npm, yarn, or pnpm
 
-### Installation
+### Installation & Running
 
-1. **Clone the repository**
-
-   ```bash
-   git clone <repository-url>
-   cd test-frontenddeveloper
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   # Using npm
-   npm install
-
-   # Using yarn
-   yarn install
-
-   # Using pnpm
-   pnpm install
-   ```
-
-3. **Start development server**
-
-   ```bash
-   # Using npm
-   npm run dev
-
-   # Using yarn
-   yarn dev
-
-   # Using pnpm
-   pnpm dev
-   ```
-
-4. **Open in browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-### Build for Production
+#### Using npm
 
 ```bash
-# Build the application
+# Clone the repository
+git clone <repository-url>
+cd test-frontenddeveloper
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
 npm run build
 
 # Start production server
-npm start
+npm run start
+
+# Type checking
+npm run type-check
+
+# Linting
+npm run lint
 ```
+
+#### Using yarn
+
+```bash
+# Install dependencies
+yarn install
+
+# Start development server
+yarn dev
+
+# Build for production
+yarn build
+
+# Start production server
+yarn start
+
+# Type checking
+yarn type-check
+
+# Linting
+yarn lint
+```
+
+#### Using pnpm
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+
+# Type checking
+pnpm type-check
+
+# Linting
+pnpm lint
+```
+
+### Development Server
+
+After running the dev command, open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📋 Available Scripts
 
@@ -116,39 +145,60 @@ npm start
 - **`npm run lint`** - Run ESLint for code quality
 - **`npm run type-check`** - Run TypeScript type checking
 
-## 🏗️ Architecture & Design Decisions
+## 🏗️ Architecture & Technical Decisions
 
-### Component Architecture
+### Core Technologies
 
-- **Modular Components**: Each UI component is self-contained with its own props interface
+- **Next.js 14** with App Router - React framework for production-ready applications
+- **TypeScript** - Type-safe JavaScript for better development experience
+- **Tailwind CSS** - Utility-first CSS framework for rapid UI development
+- **React Hook Form** - Performant forms with easy validation
+- **Lucide React** - Beautiful & consistent icon library
+
+### Architecture Decisions
+
+#### **Component Architecture**
+
+- **Modular Design**: Self-contained components with clear prop interfaces
 - **Controlled Components**: All form inputs use controlled state for predictable behavior
-- **Composition Pattern**: Components are composed together rather than deeply nested
+- **Composition over Inheritance**: Components composed together rather than deeply nested
+- **Single Responsibility**: Each component has one clear purpose
 
-### State Management
+#### **State Management**
 
-- **URL-based State**: Search parameters are stored in the URL for shareability and browser history
-- **React Hook Form**: Efficient form state management with minimal re-renders
-- **Local Component State**: UI-specific state (dropdowns, loading) managed locally
+- **URL-based State**: Search parameters stored in URL for shareability and browser history
+- **Form State**: React Hook Form for efficient form management with minimal re-renders
+- **Local State**: UI-specific state (dropdowns, modals) managed at component level
+- **No Global State**: Avoided complex state management libraries for simplicity
 
-### Type Safety
+#### **Type Safety**
 
 - **Strict TypeScript**: Comprehensive type definitions for all data structures
-- **Interface Segregation**: Separate interfaces for different concerns (Location, SearchFormData, etc.)
+- **Interface Segregation**: Separate interfaces for different concerns
 - **Type Guards**: Runtime type checking where necessary
+- **Generic Components**: Reusable typed components
 
-### Styling Strategy
+#### **Styling Strategy**
 
-- **Utility-First CSS**: Tailwind CSS for rapid UI development
-- **Component Variants**: Conditional classes for different states (error, disabled, etc.)
-- **Responsive Design**: Mobile-first approach with responsive breakpoints
-- **Design System**: Consistent color palette, spacing, and typography
+- **Design System**: Consistent cyan color scheme matching Figma specifications
+- **Utility-First**: Tailwind CSS for rapid development and consistency
+- **Responsive Design**: Mobile-first approach with proper breakpoints
+- **Component Variants**: Conditional classes for different states (hover, focus, error)
+- **Accessibility**: WCAG compliant color contrast and keyboard navigation
 
-### Performance Optimizations
+#### **Performance Optimizations**
 
-- **Next.js App Router**: Automatic code splitting and optimized bundling
-- **Client Components**: Only interactive components marked as client-side
-- **Lazy Loading**: Dynamic imports for non-critical components
-- **Optimized Images**: Next.js automatic image optimization
+- **App Router**: Next.js 14 App Router for automatic code splitting
+- **Server Components**: Static content served from server when possible
+- **Client Boundaries**: Minimal client-side JavaScript for interactivity only
+- **Bundle Optimization**: Tree shaking and module federation
+
+#### **Development Experience**
+
+- **ESLint**: Code quality and consistency enforcement
+- **TypeScript**: Compile-time error detection and IntelliSense
+- **Hot Reloading**: Instant feedback during development
+- **Clear Project Structure**: Organized folders and naming conventions
 
 ## 🔧 Key Components
 
@@ -158,14 +208,14 @@ The main search form component that handles:
 
 - Form state management with React Hook Form
 - Real-time validation with error messaging
-- Location swapping functionality
+- Location autocomplete functionality
 - URL parameter generation for navigation
 
 ### Autocomplete
 
 Smart location search component featuring:
 
-- Fuzzy search across location names and cities
+- Fuzzy search across location names
 - Keyboard navigation support
 - Click-outside to close functionality
 - Visual indicators for different location types
@@ -174,7 +224,7 @@ Smart location search component featuring:
 
 Specialized input components with:
 
-- Custom styling to match design system
+- Custom styling matching design system
 - Built-in validation logic
 - Accessible keyboard interaction
 - Clear error state indication
@@ -183,15 +233,15 @@ Specialized input components with:
 
 ### Colors
 
-- **Primary**: Blue (#2563EB) for CTAs and active states
+- **Primary**: Cyan (#22d3ee) for CTAs and active states
 - **Secondary**: Gray scales for text and borders
 - **Semantic**: Red for errors, Green for success
-- **Background**: Light gray (#F9FAFB) for page background
+- **Background**: Light blue gradient for page background
 
 ### Typography
 
 - **Font**: Inter (via Google Fonts)
-- **Scale**: Consistent type scale from text-sm to text-4xl
+- **Scale**: Consistent type scale from text-sm to text-5xl
 - **Weight**: Strategic use of font weights for hierarchy
 
 ### Spacing
@@ -202,7 +252,7 @@ Specialized input components with:
 
 ## 🚦 Form Validation
 
-### Client-Side Validation Rules
+### Validation Rules
 
 - **From/To Locations**: Required, cannot be the same
 - **Departure Date**: Required, cannot be in the past
@@ -214,7 +264,7 @@ Specialized input components with:
 
 - **Field-Level Errors**: Individual error messages per field
 - **Form-Level Validation**: Overall form state validation
-- **User-Friendly Messages**: Clear, actionable error messages in Vietnamese
+- **User-Friendly Messages**: Clear, actionable error messages in English
 
 ## 📱 Responsive Design
 
@@ -227,23 +277,8 @@ Specialized input components with:
 ### Mobile Optimizations
 
 - **Touch-Friendly**: Adequate touch target sizes (44px minimum)
-- **Swipe Gestures**: Natural mobile interaction patterns
 - **Performance**: Optimized for slower mobile connections
-
-## 🔍 SEO & Accessibility
-
-### SEO Features
-
-- **Meta Tags**: Comprehensive meta descriptions and titles
-- **Structured Data**: Semantic HTML structure
-- **URL Structure**: Clean, descriptive URLs
-
-### Accessibility
-
-- **Semantic HTML**: Proper use of HTML5 semantic elements
-- **ARIA Labels**: Screen reader friendly component labeling
-- **Keyboard Navigation**: Full keyboard accessibility
-- **Color Contrast**: WCAG AA compliant color combinations
+- **Layout**: Stack form elements vertically on smaller screens
 
 ## 🚀 Deployment
 
@@ -259,6 +294,10 @@ Specialized input components with:
 - **Railway**: Full-stack deployment
 - **Docker**: Containerized deployment
 
+### Environment Variables
+
+No environment variables required for basic functionality.
+
 ## 🐛 Known Limitations
 
 1. **Mock Data**: Location data is static JSON (in real app, would use API)
@@ -268,10 +307,10 @@ Specialized input components with:
 
 ## 🔮 Future Enhancements
 
-- **Real-time Search**: Integration with live bus inventory APIs
+- **Real-time Search**: Integration with live travel inventory APIs
 - **User Authentication**: User accounts and booking history
 - **Payment Integration**: Secure payment processing
-- **Multi-language**: Support for English and other languages
+- **Multi-language**: Support for Vietnamese and other languages
 - **Progressive Web App**: Offline functionality and app-like experience
 - **Advanced Filters**: Price range, amenities, operator filtering
 
@@ -289,7 +328,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-For questions or support, please contact [Your Name] at [your.email@example.com]
+For questions or support, please contact the development team.
 
 ---
 
